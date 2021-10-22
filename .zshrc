@@ -1,24 +1,46 @@
-# Path to your oh-my-zsh installation.
-export ZSH=/Users/rafael/.oh-my-zsh
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
-ZSH_THEME="robbyrussell"
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
+
+# Path to your oh-my-zsh installation.
+export ZSH="/Users/rafaelpraxedes/.oh-my-zsh"
+
+# Set name of the theme to load --- if set to "random", it will
+# load a random theme each time oh-my-zsh is loaded, in which case,
+# to know which specific one was loaded, run: echo $RANDOM_THEME
+# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+ZSH_THEME="powerlevel10k/powerlevel10k"
+
+# Set list of themes to pick from when loading at random
+# Setting this variable when ZSH_THEME=random will cause zsh to load
+# a theme from this variable instead of looking in $ZSH/themes/
+# If set to an empty array, this variable will have no effect.
+# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
 
-# Uncomment the following line to use hyphen-insensitive completion. Case
-# sensitive completion must be off. _ and - will be interchangeable.
+# Uncomment the following line to use hyphen-insensitive completion.
+# Case-sensitive completion must be off. _ and - will be interchangeable.
 # HYPHEN_INSENSITIVE="true"
 
 # Uncomment the following line to disable bi-weekly auto-update checks.
 # DISABLE_AUTO_UPDATE="true"
 
+# Uncomment the following line to automatically update without prompting.
+# DISABLE_UPDATE_PROMPT="true"
+
 # Uncomment the following line to change how often to auto-update (in days).
 # export UPDATE_ZSH_DAYS=13
+
+# Uncomment the following line if pasting URLs and other text is messed up.
+# DISABLE_MAGIC_FUNCTIONS="true"
 
 # Uncomment the following line to disable colors in ls.
 # DISABLE_LS_COLORS="true"
@@ -30,56 +52,39 @@ ZSH_THEME="robbyrussell"
 # ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
+# You can also set it to another string to have that shown instead of the default red dots.
+# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
+# Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
 # COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
 # much, much faster.
-DISABLE_UNTRACKED_FILES_DIRTY="true"
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # Uncomment the following line if you want to change the command execution time
 # stamp shown in the history command output.
-# The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# You can set one of the optional three formats:
+# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# or set a custom format using the strftime function format specifications,
+# see 'man strftime' for details.
 # HIST_STAMPS="mm/dd/yyyy"
 
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Which plugins would you like to load?
+# Standard plugins can be found in $ZSH/plugins/
+# Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(osx z)
-
-# User configuration
-# Disable tabs sharing history
-
-unsetopt inc_append_history
-unsetopt share_history
-
-export ANTLR4="/usr/local/lib/antlr-4.3-complete.jar"
-export ANT_OPTS="-Xms4096m -Xmx4096m"
-export ANT_HOME=/Users/rafael/Workspace/tools/apache-ant-1.10.1
-export CLASSPATH=".:/usr/local/lib/antlr-4.7.1-complete.jar:$CLASSPATH"
-export EDITO="sublime -w"
-export LIFERAY_DEPLOY_DIR=/Users/rafael/Liferay/bundles/liferay-portal
-export GRADLE_COMMAND=gradlew
-export GRADLE_HOME="/Users/rafael/Workspace/tools/gradle-3.3"
-export GRADLE_OPTS="-Xms512m -Xmx2048m"
-#export GRADLE_OPTS="-Xms512m -Xmx2048m -Drepository.url=http://192.168.109.41:8082/nexus/content/groups/public"
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
-export LFR_HOME=/Users/rafael/Workspace/sources/liferay-portal
-export MAVEN_OPTS="-Xms6048m -Xmx6048m"
-export MYSQL_HOME=/usr/local/mysql
-export ORIGINAL_PATH=$PATH
-
-export PATH=$ORIGINAL_PATH:$ANT_HOME/bin:$JAVA_HOME/bin:$LFR_HOME:$MYSQL_HOME/bin
-
-#export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/rafael/Workspace/tools/apache-ant-1.9.4/bin:/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home/bin:/Users/rafael/Workspace/sources/liferay-portal:/usr/local/mysql/bin"
-
-# export MANPATH="/usr/local/man:$MANPATH"
+plugins=(git gh z zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
+
+# User configuration
+
+# export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
@@ -94,9 +99,6 @@ source $ZSH/oh-my-zsh.sh
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
-# ssh
-# export SSH_KEY_PATH="~/.ssh/dsa_id"
-
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
@@ -106,178 +108,188 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-PROMPT='${ret_status}%{$fg_bold[green]%}%p %{$fg[cyan]%}%c %{$fg_bold[blue]%}$(git_prompt_info)$(hg_prompt_info)%{$fg_bold[blue]%} % %{$reset_color%}'
+#EXPORTS
+
+export ANT_OPTS="-Xms4g -Xmx4g"
+export EDITOR="sublime -w"
+export LFR_HOME=/Users/rafaelpraxedes/Workspace/sources/liferay-portal
+export LFR_DEPLOY_HOME=/Users/rafaelpraxedes/Workspace/bundles/ce
+export GRADLE_OPTS="-Xms6g -Xmx6g -Dorg.gradle.daemon=false"
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_301.jdk/Contents/Home
+export MAVEN_OPTS="-Xms4g -Xmx4g"
+export MYSQL_HOME=/usr/local/opt/mysql@5.7
+export ORIGINAL_PATH=$PATH
+
+export PATH=$ORIGINAL_PATH:$ANT_HOME/bin:$JAVA_HOME/bin:$LFR_HOME:$MYSQL_HOME/bin
 
 #FUNCTIONS
 
-function git_prompt_info() {
- ref=$(git symbolic-ref HEAD 2> /dev/null) || return 1
- echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}$(parse_git_dirty)$(git_prompt_ahead)$ZSH_THEME_GIT_PROMPT_SUFFIX"
+ij() {
+  /Users/rafaelpraxedes/Workspace/sources/liferay-intellij/intellij "$@"
 }
 
 createMySqlDB() {
-	MYSQL=$(which mysql)
-	MUSER="root"
-	DBNAME=""
-	DUMP_FILE=""
-	
-	#RESOLVE PARAMETERS
+  MYSQL=$(which mysql)
+  MUSER="root"
+  DBNAME=""
+  DUMP_FILE=""
+  
+  #RESOLVE PARAMETERS
 
-	if [ "$#" -eq 0 ]; then
-		DBNAME="lportal"
-	elif [ "$#" -eq 1 ] && [ ! -z "$1" ] && [ -f "$1" ]; then
-		filename=$(basename "$1")
-		DBNAME="${filename%.*}"
-		DUMP_FILE=$1
-	elif [ "$#" -eq 1 ] && [ ! -z "$1" ]; then
-		DBNAME=$1
-	elif [ "$#" -eq 2 ] && [ -f "$1" ]; then
-		DBNAME=$2
-		DUMP_FILE=$1
-	elif [ "$#" -eq 2 ] && [ -f "$2" ]; then
-		DBNAME=$1
-		DUMP_FILE=$2
-	fi
-	
-	if [ ! -z "$DBNAME" ]; then	
-		#DROP DATABASE
+  if [ "$#" -eq 0 ]; then
+    DBNAME="lportal"
+  elif [ "$#" -eq 1 ] && [ ! -z "$1" ] && [ -f "$1" ]; then
+    filename=$(basename "$1")
+    DBNAME="${filename%.*}"
+    DUMP_FILE=$1
+  elif [ "$#" -eq 1 ] && [ ! -z "$1" ]; then
+    DBNAME=$1
+  elif [ "$#" -eq 2 ] && [ -f "$1" ]; then
+    DBNAME=$2
+    DUMP_FILE=$1
+  elif [ "$#" -eq 2 ] && [ -f "$2" ]; then
+    DBNAME=$1
+    DUMP_FILE=$2
+  fi
+  
+  if [ ! -z "$DBNAME" ]; then 
+    #DROP DATABASE
 
-		dropMySqlDB  $DBNAME
+    dropMySqlDB  $DBNAME
 
-		#CREATE DATABASE
+    #CREATE DATABASE
 
-		$MYSQL -u $MUSER -e "CREATE SCHEMA \`$DBNAME\` DEFAULT CHARACTER SET utf8"
+    $MYSQL -u $MUSER -e "CREATE SCHEMA \`$DBNAME\` DEFAULT CHARACTER SET utf8"
 
-		echo "database $DBNAME was created successfully"
-	fi
+    echo "database $DBNAME was created successfully"
+  fi
 
-	if [ ! -z "$DUMP_FILE" ]; then
-		#IMPORT FROM FILE
-		$MYSQL -u $MUSER $DBNAME < $DUMP_FILE
+  if [ ! -z "$DUMP_FILE" ]; then
+    #IMPORT FROM FILE
+    $MYSQL -u $MUSER $DBNAME < $DUMP_FILE
 
-		echo "'$PWD/$DUMP_FILE' was imported in $DBNAME database"
-	fi
+    echo "'$PWD/$DUMP_FILE' was imported in $DBNAME database"
+  fi
 }
 
 dropMySqlDB() {
-	MYSQL=$(which mysql)
-	MUSER="root"
-	
-	for DBNAME in "$@"
-	do
-	    $MYSQL -u $MUSER -e "drop database IF EXISTS \`$DBNAME\`"
-	done
+  MYSQL=$(which mysql)
+  MUSER="root"
+  
+  for DBNAME in "$@"
+  do
+      $MYSQL -u $MUSER -e "drop database IF EXISTS \`$DBNAME\`"
+  done
 }
 
 copyMySqlDB() {
-	MYSQL=$(which mysql)
-	MYSQLADMIN=$(which mysqladmin)
-	MYSQLDUMP=$(which mysqldump)	
+  MYSQL=$(which mysql)
+  MYSQLADMIN=$(which mysqladmin)
+  MYSQLDUMP=$(which mysqldump)  
 
-	createMySqlDB $2
+  createMySqlDB $2
 
-	MYSQLDUMP -u root -v $1 | MYSQL -u root -D $2
+  MYSQLDUMP -u root -v $1 | MYSQL -u root -D $2
 
-	echo "'$2' was created based on $1 database"
+  echo "'$2' was created based on $1 database"
 }
 
 fetchSubRepoPR() {
-	git checkout master
-	git pull upstream master
-	git fetch upstream pull/$1/head:repo-pr-$1
-	git checkout repo-pr-$1
-	git rebase master
-}
-
-elasticQ() {
-	curl -X GET 'http://localhost:9200/_search?pretty=true' -H 'content-type: application/json' -d $1
+  git checkout master
+  git pull upstream master
+  git fetch upstream pull/$1/head:repo-pr-$1
+  git checkout repo-pr-$1
+  git rebase master
 }
 
 setce(){
-	export LFR_HOME=/Users/rafael/Workspace/sources/liferay-portal
-	export GRADLE_COMMAND=gradlew
-	setcedeploy
-	reloadPATH
+  export LFR_HOME=/Users/rafaelpraxedes/Workspace/sources/liferay-portal
+  export LFR_DEPLOY_HOME=/Users/rafaelpraxedes/Workspace/bundles/ce
+
+  reloadPATH
 }
 
 setee(){
-	export LFR_HOME=/Users/rafael/Workspace/sources/liferay-portal-ee
-	export GRADLE_COMMAND=gradlew
-	seteedeploy
-	reloadPATH
+  export LFR_HOME=/Users/rafaelpraxedes/Workspace/sources/liferay-portal-ee
+  export LFR_DEPLOY_HOME=/Users/rafaelpraxedes/Workspace/bundles/ee
+
+  reloadPATH
 }
 
-setcedeploy(){
-        export LIFERAY_DEPLOY_DIR=/Users/rafael/Liferay/bundles/liferay-portal
+starttomcat() {
+  $LFR_DEPLOY_HOME/tomcat-*/bin/catalina.sh run
 }
 
-seteedeploy(){
-	export LIFERAY_DEPLOY_DIR=/Users/rafael/Liferay/bundles-ee/7.0.x
-}
+clearEnv() {
+  echo "step 1"
+  createMySqlDB
 
-setExternalGradle(){
-	export GRADLE_COMMAND=gradle
-	export PATH=$ORIGINAL_PATH:$ANT_HOME/bin:$JAVA_HOME/bin:$GRADLE_HOME/bin:$MYSQL_HOME/bin
+  echo "step 2"
+  rm -rf $LFR_DEPLOY_HOME/osgi/state
+
+  echo "step 3"
+  rm -rf $LFR_DEPLOY_HOME/data/elasticsearch*/indices
+
+  echo "'$LFR_DEPLOY_HOME' has been cleared"
 }
 
 reloadPATH() {
-	export PATH=$ORIGINAL_PATH:$ANT_HOME/bin:$JAVA_HOME/bin:$LFR_HOME:$MYSQL_HOME/bin
-}
-
-java-7() {
-	export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home
-
-	reloadPATH
-}
-
-java-8() {
-	export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_101.jdk/Contents/Home
-
-	reloadPATH
+  export PATH=$ORIGINAL_PATH:$ANT_HOME/bin:$JAVA_HOME/bin:$LFR_HOME:$MYSQL_HOME/bin
 }
 
 pag() {
-	ps aux | grep $1 
+  ps aux | grep $1 
 }
 
 gw() {
-	$GRADLE_COMMAND $1 $2 $3 $4 $5 $6 $7 $8
+  gradlew $1 $2 $3 $4 $5 $6 $7 $8
 }
 
-gcd() {
-	gw -Dbuild.exclude.dirs="dynamic-data-mapping-test,dynamic-data-mapping-test-util,dynamic-data-lists-test"  clean deploy
-}
-
-aa() {
-	cd $LFR_HOME
-	ant all
+pag() {
+  ps aux | grep $1 
 }
 
 wip() {
-	git add .
-	git commit -m "WIP"
+  git add .
+  git commit -m "WIP"
 }
 
-# ALIAS
 
-alias antlr4='java -Xmx500M -cp "/usr/local/lib/antlr-4.7.1-complete.jar:$CLASSPATH" org.antlr.v4.Tool'
-alias grun='java org.antlr.v4.gui.TestRig'
-alias gfs="gw formatSource"
+## GH cli
 
-alias clCEenv="cdce; createMySqlDB; gcfdx; ant all; cd modules; gw eclipse; cd -"
-alias clEEenv="cdee; createMySqlDB lportal-ee; gcfdx; ant all; cd modules; gw eclipse; cd -"
+ght-checkout() {
+  gh pr checkout $1 -R liferay-workflow/liferay-portal -f -b pr-team-$1
+  gh pr comment $1 -R liferay-workflow/liferay-portal --body "Just started reviewing :)"
+}
 
-alias gcfdx="git clean -dfx -e build.rafael.properties -e app.server.rafael.properties -e portal-ext.properties -e release.rafael.properties -e portal-test-ext.properties -e .project -e .classpath"
+ght-list() {
+  gh pr list -R liferay-workflow/liferay-portal
+}
 
-alias cllc="rm -rf /Users/rafael/.m2/repository/com/liferay; rm -rf /Users/rafael/.liferay"
+ght-send() {
+  gh pr create --repo liferay-workflow/liferay-portal -B master -b "" -t "$(git log -1 --pretty=%B)"
+}
 
-alias bce="cd /Users/rafael/Liferay/bundles/"
-alias bee="cd /Users/rafael/Liferay/bundles-ee/"
+#ALIASES
+
+alias gitclean="git clean -dfx -e build.rafaelpraxedes.properties -e gradle-ext.properties -e build-ext.properties -e app.server.rafaelpraxedes.properties -e portal-ext.properties -e system-ext.properties -e test.rafaelpraxedes.properties -e working.dir.rafaelpraxedes.properties -e .project -e .classpath -e .iml"
+alias gu="git fetch upstream && git pull && git push"
+alias aa="ant setup-profile-dxp && ant all && ij"
+alias aace="ant setup-profile-portal && ant all"
+alias gsyncrb="git pull --rebase --no-tags upstream master && git push origin master"
+alias gwd="gw deploy --parallel"
+alias gwc="gw clean --parallel"
+alias gwcd="gw clean deploy --parallel"
+alias gwf="gw formatSource --parallel"
+alias gwfcd="gw formatSource clean deploy --parallel"
+alias gww="gw deployFast -at"
+alias stoptomcat="ps aux | grep tomcat | grep -v grep | tr -s \" \" | cut -d \" \" -f 2 | xargs kill -9"
+
+alias bce="cd ~/Workspace/bundles/ce"
+alias bee="cd ~/Workspace/bundles/ee/"
 
 alias cdce="cd ~/Workspace/sources/liferay-portal; setce"
 alias cdee="cd ~/Workspace/sources/liferay-portal-ee; setee"
 
-alias s-pr="fetchSubRepoPR"
-
-alias tomcat="sh /Users/rafael/Liferay/bundles/liferay-portal/tomcat-9.0.10/bin/catalina.sh run"
-alias tomcat-ee="sh /Users/rafael/Liferay/bundles-ee/7.1.x/tomcat-9.0.10/bin/catalina.sh run"
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
