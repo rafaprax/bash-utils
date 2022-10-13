@@ -115,12 +115,12 @@ export EDITOR="sublime -w"
 export LFR_HOME=/Users/rafaelpraxedes/Workspace/sources/liferay-portal
 export LFR_DEPLOY_HOME=/Users/rafaelpraxedes/Workspace/bundles/ce
 export GRADLE_OPTS="-Xms6g -Xmx6g -Dorg.gradle.daemon=false"
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_301.jdk/Contents/Home
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_333.jdk/Contents/Home
 export MAVEN_OPTS="-Xms4g -Xmx4g"
 export MYSQL_HOME=/usr/local/opt/mysql@5.7
 export ORIGINAL_PATH=$PATH
 
-export PATH=$ORIGINAL_PATH:$ANT_HOME/bin:$JAVA_HOME/bin:$LFR_HOME:$MYSQL_HOME/bin
+export PATH=$ORIGINAL_PATH:$ANT_HOME/bin:$JAVA_HOME/bin:$LFR_HOME:$MYSQL_HOME/bin:/Users/rafaelpraxedes/Downloads
 
 #FUNCTIONS
 
@@ -161,14 +161,14 @@ createMySqlDB() {
 
     $MYSQL -u $MUSER -e "CREATE SCHEMA \`$DBNAME\` DEFAULT CHARACTER SET utf8"
 
-    echo "database $DBNAME was created successfully"
+    echo "database $DBNAME has been created successfully"
   fi
 
   if [ ! -z "$DUMP_FILE" ]; then
     #IMPORT FROM FILE
     $MYSQL -u $MUSER $DBNAME < $DUMP_FILE
 
-    echo "'$PWD/$DUMP_FILE' was imported in $DBNAME database"
+    echo "'$PWD/$DUMP_FILE' has been imported in $DBNAME database"
   fi
 }
 
@@ -191,7 +191,7 @@ copyMySqlDB() {
 
   MYSQLDUMP -u root -v $1 | MYSQL -u root -D $2
 
-  echo "'$2' was created based on $1 database"
+  echo "'$2' has been created based on $1 database"
 }
 
 fetchSubRepoPR() {
@@ -216,21 +216,57 @@ setee(){
   reloadPATH
 }
 
-starttomcat() {
-  $LFR_DEPLOY_HOME/tomcat-*/bin/catalina.sh run
+setJdk() {
+
+  NEW_JAVA_HOME=$JAVA_HOME
+
+  if [ "$1" -eq 8 ]; then
+    NEW_JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_301.jdk/Contents/Home"
+  elif [  "$1" -eq 11 ]; then
+     NEW_JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-11.0.13.jdk/Contents/Home"
+  fi
+
+  export JAVA_HOME=$NEW_JAVA_HOME
+
+  reloadPATH
+
+  echo "JAVA_HOME has been set to '$JAVA_HOME'"
+}
+
+startTomcat() {
+  $LFR_DEPLOY_HOME/tomcat-*/bin/catalina.sh jpda run
+}
+
+profileTomcat() {
+  export JPDA_SUSPEND=y
+
+  $LFR_DEPLOY_HOME/tomcat-*/bin/startup_with_yjp.sh
+}
+
+startWildfly() {
+  $LFR_DEPLOY_HOME/wildfly-*/bin/standalone.sh --debug
+}
+
+stopServer() {
+  export JPDA_SUSPEND=n
+
+  lsof -t -i:8080 | xargs kill -9
 }
 
 clearEnv() {
-  echo "step 1"
+  echo "step 1: Creating lportal database..."
   createMySqlDB
 
-  echo "step 2"
+  echo "step 2: Cleaning hypersonic folder"
+  rm -rf $LFR_DEPLOY_HOME/data/hypersonic
+
+  echo "step 3: Cleaning OSGi state..."
   rm -rf $LFR_DEPLOY_HOME/osgi/state
 
-  echo "step 3"
+  echo "step 4: Remove elasticsearch indices..."
   rm -rf $LFR_DEPLOY_HOME/data/elasticsearch*/indices
 
-  echo "'$LFR_DEPLOY_HOME' has been cleared"
+  echo "'$LFR_DEPLOY_HOME' has been cleaned"
 }
 
 reloadPATH() {
@@ -249,30 +285,58 @@ pag() {
   ps aux | grep $1 
 }
 
+removeImmediate() {
+  CURRENT_DIR=$PWD
+  LPS_ID=$(git symbolic-ref --short HEAD)
+
+  for MODULE_PATH in "$@"
+  do
+    cd $LFR_HOME/$MODULE_PATH
+
+    MODULE_NAME=$(basename "$PWD")
+
+    echo "Removing immediate from $MODULE_NAME"
+    sed -i '' 's/immediate = true,//g' **/*.java(D.)
+    gw formatSource --parallel
+    git add .
+  done
+
+  echo 'Write the commit message. Ex: "Remove immediate from ..."'
+  read COMMIT_MSG
+
+  git commit -m "$LPS_ID $COMMIT_MSG"
+
+  cd $CURRENT_DIR
+}
+
 wip() {
   git add .
   git commit -m "WIP"
 }
 
-
 ## GH cli
 
-ght-checkout() {
-  gh pr checkout $1 -R liferay-workflow/liferay-portal -f -b pr-team-$1
-  gh pr comment $1 -R liferay-workflow/liferay-portal --body "Just started reviewing :)"
+ghr() {
+  gh pr checkout $2 -R $1/liferay-portal -f -b pr-$1-$2
+  gh pr comment $2 -R $1/liferay-portal --body "Just started reviewing :)"
 }
 
-ght-list() {
-  gh pr list -R liferay-workflow/liferay-portal
+ghc() {
+  gh pr checkout $1 -R liferay-core-infra/liferay-portal -f -b pr-team-$1
+  gh pr comment $1 -R liferay-core-infra/liferay-portal --body "Just started reviewing :)"
 }
 
-ght-send() {
-  gh pr create --repo liferay-workflow/liferay-portal -B master -b "" -t "$(git log -1 --pretty=%B)"
+ghl() {
+  gh pr list -R liferay-core-infra/liferay-portal
+}
+
+ghs() {
+  gh pr create --repo liferay-core-infra/liferay-portal -B master -b "" -t "$(git log -1 --pretty=%B)"
 }
 
 #ALIASES
 
-alias gitclean="git clean -dfx -e build.rafaelpraxedes.properties -e gradle-ext.properties -e build-ext.properties -e app.server.rafaelpraxedes.properties -e portal-ext.properties -e system-ext.properties -e test.rafaelpraxedes.properties -e working.dir.rafaelpraxedes.properties -e .project -e .classpath -e .iml"
+alias gitclean="git clean -dfx -e build.rafaelpraxedes.properties -e gradle-ext.properties -e build-ext.properties -e app.server.rafaelpraxedes.properties -e portal-ext.properties -e system-ext.properties -e test.rafaelpraxedes.properties -e working.dir.rafaelpraxedes.properties -e .project -e .classpath -e *.iml"
 alias gu="git fetch upstream && git pull && git push"
 alias aa="ant setup-profile-dxp && ant all && ij"
 alias aace="ant setup-profile-portal && ant all"
@@ -283,7 +347,8 @@ alias gwcd="gw clean deploy --parallel"
 alias gwf="gw formatSource --parallel"
 alias gwfcd="gw formatSource clean deploy --parallel"
 alias gww="gw deployFast -at"
-alias stoptomcat="ps aux | grep tomcat | grep -v grep | tr -s \" \" | cut -d \" \" -f 2 | xargs kill -9"
+
+alias cllc="rm -rf /Users/rafaelpraxedes/.m2/repository/com/liferay; rm -rf /Users/rafaelpraxedes/.liferay"
 
 alias bce="cd ~/Workspace/bundles/ce"
 alias bee="cd ~/Workspace/bundles/ee/"
