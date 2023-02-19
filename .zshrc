@@ -111,6 +111,7 @@ source $ZSH/oh-my-zsh.sh
 #EXPORTS
 
 export ANT_OPTS="-Xms4g -Xmx4g"
+export BLADE_HOME=/Users/rafaelpraxedes/Library/PackageManager/bin
 export EDITOR="sublime -w"
 export LFR_HOME=/Users/rafaelpraxedes/Workspace/sources/liferay-portal
 export LFR_DEPLOY_HOME=/Users/rafaelpraxedes/Workspace/bundles/ce
@@ -120,7 +121,8 @@ export MAVEN_OPTS="-Xms4g -Xmx4g"
 export MYSQL_HOME=/usr/local/opt/mysql@5.7
 export ORIGINAL_PATH=$PATH
 
-export PATH=$ORIGINAL_PATH:$ANT_HOME/bin:$JAVA_HOME/bin:$LFR_HOME:$MYSQL_HOME/bin:/Users/rafaelpraxedes/Downloads
+
+export PATH=$ORIGINAL_PATH:$ANT_HOME/bin:$BLADE_HOME:$JAVA_HOME/bin:$LFR_HOME:$MYSQL_HOME/bin:/Users/rafaelpraxedes/Downloads
 
 #FUNCTIONS
 
@@ -194,12 +196,24 @@ copyMySqlDB() {
   echo "'$2' has been created based on $1 database"
 }
 
+dumpMySqlDB() {
+  MYSQLDUMP=$(which mysqldump)  
+
+  MYSQLDUMP -u root -v $1 > $2
+
+  echo "'$2' has been created based on $1 database"
+}
+
 fetchSubRepoPR() {
   git checkout master
   git pull upstream master
   git fetch upstream pull/$1/head:repo-pr-$1
   git checkout repo-pr-$1
   git rebase master
+}
+
+gfb() {
+  git fetch git@github.com:$1/liferay-portal.git $2:$2
 }
 
 setce(){
@@ -221,9 +235,11 @@ setJdk() {
   NEW_JAVA_HOME=$JAVA_HOME
 
   if [ "$1" -eq 8 ]; then
-    NEW_JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_301.jdk/Contents/Home"
+    NEW_JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_333.jdk/Contents/Home"
   elif [  "$1" -eq 11 ]; then
      NEW_JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-11.0.13.jdk/Contents/Home"
+  elif [  "$1" -eq 17 ]; then
+     NEW_JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home"
   fi
 
   export JAVA_HOME=$NEW_JAVA_HOME
@@ -249,7 +265,6 @@ startWildfly() {
 
 stopServer() {
   export JPDA_SUSPEND=n
-
   lsof -t -i:8080 | xargs kill -9
 }
 
@@ -270,7 +285,7 @@ clearEnv() {
 }
 
 reloadPATH() {
-  export PATH=$ORIGINAL_PATH:$ANT_HOME/bin:$JAVA_HOME/bin:$LFR_HOME:$MYSQL_HOME/bin
+  export PATH=$ORIGINAL_PATH:$ANT_HOME/bin:$BLADE_HOME:$JAVA_HOME/bin:$LFR_HOME:$MYSQL_HOME/bin:/Users/rafaelpraxedes/Downloads
 }
 
 pag() {
@@ -285,7 +300,7 @@ pag() {
   ps aux | grep $1 
 }
 
-removeImmediate() {
+ri() {
   CURRENT_DIR=$PWD
   LPS_ID=$(git symbolic-ref --short HEAD)
 
@@ -297,14 +312,11 @@ removeImmediate() {
 
     echo "Removing immediate from $MODULE_NAME"
     sed -i '' 's/immediate = true,//g' **/*.java(D.)
+    #find . -type f -name "*.java" -exec sed -i 's/immediate = true,//g' {} +
     gw formatSource --parallel
     git add .
+    git commit -m "$LPS_ID Remove immediate from $MODULE_NAME"
   done
-
-  echo 'Write the commit message. Ex: "Remove immediate from ..."'
-  read COMMIT_MSG
-
-  git commit -m "$LPS_ID $COMMIT_MSG"
 
   cd $CURRENT_DIR
 }
@@ -316,22 +328,29 @@ wip() {
 
 ## GH cli
 
-ghr() {
+pr-review() {
   gh pr checkout $2 -R $1/liferay-portal -f -b pr-$1-$2
   gh pr comment $2 -R $1/liferay-portal --body "Just started reviewing :)"
 }
 
-ghc() {
-  gh pr checkout $1 -R liferay-core-infra/liferay-portal -f -b pr-team-$1
-  gh pr comment $1 -R liferay-core-infra/liferay-portal --body "Just started reviewing :)"
+pr-review-core() {
+  pr-review liferay-core-infra
 }
 
-ghl() {
+pr-list() {
   gh pr list -R liferay-core-infra/liferay-portal
 }
 
-ghs() {
+pr() {
   gh pr create --repo liferay-core-infra/liferay-portal -B master -b "" -t "$(git log -1 --pretty=%B)"
+}
+
+gpush() {
+
+  LPS_ID=$(git symbolic-ref --short HEAD)
+
+  git push -f origin ${LPS_ID}
+
 }
 
 #ALIASES
