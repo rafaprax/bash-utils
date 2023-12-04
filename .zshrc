@@ -345,6 +345,44 @@ pr() {
   gh pr create --repo liferay-core-infra/liferay-portal -B master -b "" -t "$(git log -1 --pretty=%B)"
 }
 
+fwd() {
+  PR_INFO=$(gh pr view $1 --json number,title,author,url,body --repo rafaprax/liferay-portal)
+
+  TITLE=`jq -r '.title' <<< $PR_INFO`
+  echo "TITLE=$TITLE"
+
+  AUTHOR=`jq -r '.author.login' <<< $PR_INFO`
+  echo "AUTHOR=$AUTHOR"
+
+  URL=`jq -r '.url' <<< $PR_INFO`
+  echo "URL=$URL"
+
+  BODY=`jq -r '.body' <<< $PR_INFO`
+  echo "BODY=$BODY"
+
+  BRANCH_NAME=pr-rafaprax-$1-from-$AUTHOR
+  echo "BRANCH_NAME=$BRANCH_NAME"
+
+  LPS=$(git log $BRANCH_NAME -1 --pretty=%B | cut -d " " -f1) 
+
+  git fetch origin pull/$1/head:$BRANCH_NAME
+
+  git push origin $BRANCH_NAME:$BRANCH_NAME
+
+  gh pr create \
+    --repo liferay-core-infra/liferay-portal \
+    --base master \
+    --head rafaprax:$BRANCH_NAME \
+    --title $TITLE \
+    --body "**Author:** @$AUTHOR
+**Issue:** https://liferay.atlassian.net/browse/$LPS
+**Forwarded from:** $URL
+**Original comment:**
+$BODY"
+
+  gh pr close $1
+}
+
 gpush() {
 
   LPS_ID=$(git symbolic-ref --short HEAD)
