@@ -350,11 +350,6 @@ function jd_gui {
 	java -jar /home/me/dev/tools/decompiler/jd-gui-1.6.6.jar &
 }
 
-function set_gcloud_envs {
-	export PROJECT_ID=upgrades-accelerator-liferay
-	export LOCATION=us-central1
-}
-
 function drun_liferay() {
 
 	if [  -z "$1" ]; then
