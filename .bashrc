@@ -68,6 +68,7 @@ function cd_module() {
 }
 
 function customize_aliases {
+	alias aa="switch_to_java_8 && ant setup-profile-dxp && ant all && ij"
 	alias ac="ant compile"
 	alias acc="ant clean compile"
 	alias ad="ant deploy"
@@ -349,9 +350,16 @@ function jd_gui {
 	java -jar /home/me/dev/tools/decompiler/jd-gui-1.6.6.jar &
 }
 
+function set_gcloud_envs {
+	export PROJECT_ID=upgrades-accelerator-liferay
+	export LOCATION=us-central1
+}
+
 function drun_liferay() {
 
-	if [ "$1" -eq 70 ]; then
+	if [  -z "$1" ]; then
+	 	docker run -e JPDA_ADDRESS=0.0.0.0:8000 -e LIFERAY_JPDA_ENABLED=true -it -p 8000:8000 -p 8080:8080 liferay/portal:latest
+	elif [ "$1" -eq 70 ]; then
 		docker run -e JPDA_ADDRESS=0.0.0.0:8070 -e LIFERAY_JPDA_ENABLED=true -it -p 8070:8000 -p 7000:8080 liferay/portal:7.0.6-ga7
 	elif [  "$1" -eq 71 ]; then
 	 	docker run -e JPDA_ADDRESS=0.0.0.0:8071 -e LIFERAY_JPDA_ENABLED=true -it -p 8071:8000 -p 7100:8080 liferay/portal:7.1.3-ga4
@@ -361,10 +369,8 @@ function drun_liferay() {
 	 	docker run -e JPDA_ADDRESS=0.0.0.0:8073 -e LIFERAY_JPDA_ENABLED=true -it -p 8073:8000 -p 7300:8080 liferay/portal:7.3.7-ga8
 	elif [  "$1" -eq 74 ]; then
 	 	docker run -e JPDA_ADDRESS=0.0.0.0:8074 -e LIFERAY_JPDA_ENABLED=true -it -p 8074:8000 -p 7400:8080 liferay/dxp:2024.q1.1
-	elif [  -z "$1" ]; then
-	 	docker run -e JPDA_ADDRESS=0.0.0.0:8000 -e LIFERAY_JPDA_ENABLED=true -it -p 8000:8000 -p 8000:8080 liferay/portal:latest
 	else
-		docker run -e JPDA_ADDRESS=0.0.0.0:8000 -e LIFERAY_JPDA_ENABLED=true -it -p 8000:8000 -p 8000:8080 liferay/$1
+		docker run -e JPDA_ADDRESS=0.0.0.0:8000 -e LIFERAY_JPDA_ENABLED=true -it -p 8000:8000 -p 8080:8080 liferay/$1
 	fi
 }
 
@@ -380,3 +386,39 @@ customize_prompt
 include_custom_bashrc
 
 print_liferay_motd
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+
+function analyze_upgrade {
+    java -jar ~/dev/upgrades/analyzer.jar "$@"
+}
+
+function upgrade_analyzer_alias {
+    alias aup="analyze_upgrade"
+}
+
+upgrade_analyzer_alias
+
+
+function analyze_upgrade_project {
+    java -jar ~/.liferay-upgrades-analyzer/upgrade-analyzer.jar "$@"
+}
+
+function upgrade_analyzer_alias {
+    alias aup="analyze_upgrade_project"
+}
+
+function vpn_connect {
+	openvpn3 session-start --dco true --config rafael.praxedes
+}
+
+function vpn_disconnect {
+	CURRENT_SESSION_PATH=$(openvpn3 sessions-list  | grep 'Path:' | awk -F ':' '{print $2}')
+	
+	openvpn3 session-manage --session-path $CURRENT_SESSION_PATH --disconnect
+}
+
+upgrade_analyzer_alias
